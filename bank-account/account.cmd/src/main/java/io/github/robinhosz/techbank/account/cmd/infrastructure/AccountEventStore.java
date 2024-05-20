@@ -7,6 +7,7 @@ import io.github.robinhosz.techbank.account.cmd.exceptions.ConcurrencyException;
 import io.github.robinhosz.techbank.cqrs.core.events.BaseEvent;
 import io.github.robinhosz.techbank.cqrs.core.events.EventModel;
 import io.github.robinhosz.techbank.cqrs.core.infrastructure.EventStore;
+import io.github.robinhosz.techbank.cqrs.core.producers.EventProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class AccountEventStore implements EventStore {
+
+    @Autowired
+    private EventProducer eventProducer;
 
     @Autowired
     private EventStoreRepository eventStoreRepository;
@@ -39,8 +43,8 @@ public class AccountEventStore implements EventStore {
                     .version(version)
                     .build();
             var persistedEvent = eventStoreRepository.save(eventModel);
-            if (persistedEvent != null) {
-                //TODO: produce event to kafka
+            if (!persistedEvent.getId().isEmpty()) {
+                eventProducer.produce(persistedEvent.getClass().getSimpleName(), event);
             }
         }
     }
