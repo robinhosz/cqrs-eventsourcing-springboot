@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class AccountCommandHandler implements CommandHandler {
 
     @Autowired
-    private EventSourcingHandler<AccountAggregate> eventSourcingHandler;>
+    private EventSourcingHandler<AccountAggregate> eventSourcingHandler;
 
     @Override
     public void handle(OpenAccountCommand command) {
