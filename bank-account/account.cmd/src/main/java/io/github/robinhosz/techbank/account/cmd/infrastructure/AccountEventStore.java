@@ -2,6 +2,7 @@ package io.github.robinhosz.techbank.account.cmd.infrastructure;
 
 
 import io.github.robinhosz.techbank.account.cmd.domain.EventStoreRepository;
+import io.github.robinhosz.techbank.account.cmd.exceptions.AggregateNotFoundException;
 import io.github.robinhosz.techbank.account.cmd.exceptions.ConcurrencyException;
 import io.github.robinhosz.techbank.cqrs.core.events.BaseEvent;
 import io.github.robinhosz.techbank.cqrs.core.events.EventModel;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountEventStore implements EventStore {
@@ -45,6 +47,10 @@ public class AccountEventStore implements EventStore {
 
     @Override
     public List<BaseEvent> getEvents(String aggregateId) {
-        return null;
+        var eventStream = eventStoreRepository.findByAggregateIdentifier(aggregateId);
+        if (eventStream == null || eventStream.isEmpty()) {
+            throw new AggregateNotFoundException("Aggregate not found");
+        }
+        return eventStream.stream().map(EventModel::getEventData).collect(Collectors.toList());
     }
 }
