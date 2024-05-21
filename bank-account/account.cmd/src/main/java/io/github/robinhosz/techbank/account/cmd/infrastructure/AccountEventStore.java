@@ -1,6 +1,7 @@
 package io.github.robinhosz.techbank.account.cmd.infrastructure;
 
 
+import io.github.robinhosz.techbank.account.cmd.domain.AccountAggregate;
 import io.github.robinhosz.techbank.account.cmd.domain.EventStoreRepository;
 import io.github.robinhosz.techbank.account.cmd.exceptions.AggregateNotFoundException;
 import io.github.robinhosz.techbank.account.cmd.exceptions.ConcurrencyException;
@@ -38,13 +39,13 @@ public class AccountEventStore implements EventStore {
                     .timestamp(new Date())
                     .aggregateIdentifier(aggregateId)
                     .eventType(event.getClass().getTypeName())
-                    .aggregateType(event.getClass().getDeclaringClass().getTypeName())
+                    .aggregateType(AccountAggregate.class.getTypeName())
                     .eventData(event)
                     .version(version)
                     .build();
             var persistedEvent = eventStoreRepository.save(eventModel);
             if (!persistedEvent.getId().isEmpty()) {
-                eventProducer.produce(persistedEvent.getClass().getSimpleName(), event);
+                eventProducer.produce(event.getClass().getSimpleName(), event);
             }
         }
     }

@@ -7,5 +7,4 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder
 public class AccountClosedEvent extends BaseEvent {
-    private String id;
 }
