@@ -20,7 +20,7 @@ public class AccountCommandHandler implements CommandHandler {
     @Override
     public void handle(DepositFundsCommand command) {
         var aggregate = eventSourcingHandler.getById(command.getId());
-        aggregate.depositFunds(command.getAmmount());
+        aggregate.depositFunds(command.getAmount());
         eventSourcingHandler.save(aggregate);
     }
 

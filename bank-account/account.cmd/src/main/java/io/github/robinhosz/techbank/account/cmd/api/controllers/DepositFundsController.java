@@ -1,7 +1,6 @@
 package io.github.robinhosz.techbank.account.cmd.api.controllers;
 
 import io.github.robinhosz.techbank.account.cmd.api.commands.DepositFundsCommand;
-import io.github.robinhosz.techbank.account.cmd.api.dto.OpenAccountResponse;
 import io.github.robinhosz.techbank.account.cmd.exceptions.AggregateNotFoundException;
 import io.github.robinhosz.techbank.account.common.dto.BaseResponse;
 import io.github.robinhosz.techbank.cqrs.core.infrastructure.CommandDispatcher;
