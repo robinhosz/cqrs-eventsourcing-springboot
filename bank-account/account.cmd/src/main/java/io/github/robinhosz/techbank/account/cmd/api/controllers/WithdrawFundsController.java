@@ -28,7 +28,7 @@ public class WithdrawFundsController {
         try {
             command.setId(id);
             commandDispatcher.send(command);
-            return new ResponseEntity<>(new BaseResponse("Withdraw Funds deposited successfully"), HttpStatus.OK);
+            return new ResponseEntity<>(new BaseResponse("Withdraw Funds from bank account successfully"), HttpStatus.OK);
 
         } catch (IllegalStateException | AggregateNotFoundException e) {
             logger.log(Level.WARNING, MessageFormat.format("Client made a had request but failed to process. Reason: {0}", e.toString()));
