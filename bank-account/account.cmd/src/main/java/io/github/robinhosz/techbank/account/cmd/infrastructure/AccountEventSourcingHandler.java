@@ -5,6 +5,7 @@ import io.github.robinhosz.techbank.cqrs.core.domain.AggregateRoot;
 import io.github.robinhosz.techbank.cqrs.core.events.BaseEvent;
 import io.github.robinhosz.techbank.cqrs.core.handlers.EventSourcingHandler;
 import io.github.robinhosz.techbank.cqrs.core.infrastructure.EventStore;
+import io.github.robinhosz.techbank.cqrs.core.producers.EventProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,9 @@ public class AccountEventSourcingHandler implements EventSourcingHandler<Account
 
     @Autowired
     private EventStore eventStore;
+
+    @Autowired
+    private EventProducer eventProducer;
 
     @Override
     public void save(AggregateRoot aggregate) {
@@ -32,5 +36,18 @@ public class AccountEventSourcingHandler implements EventSourcingHandler<Account
             aggregate.setVersion(latestVersion.get());
         }
         return aggregate;
+    }
+
+    @Override
+    public void republishEvents() {
+        var aggregateIds = eventStore.getAggregateIds();
+        for(var id: aggregateIds) {
+            var aggregate = getById(id);
+            if(aggregate == null || !aggregate.getActive()) continue;
+            var events = eventStore.getEvents(id);
+            for(var event: events) {
+                eventProducer.produce(event.getClass().getSimpleName(), event);
+            }
+        }
     }
 }
